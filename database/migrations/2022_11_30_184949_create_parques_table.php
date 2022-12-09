@@ -24,6 +24,7 @@ return new class extends Migration
             $table->unsignedBigInteger('cantidad_sensores');
             $table->unsignedBigInteger('cantidad_entradas');
             $table->unsignedBigInteger('cantidad_salidas');
+            $table->boolean('status')->default(false);
             $table->timestamps();
         });
     }

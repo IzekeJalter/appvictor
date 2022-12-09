@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('telefono');
             $table->unsignedBigInteger('numero_tarjeta');
             $table->foreign('numero_tarjeta')->references('id')->on('tarjetas');
+            $table->boolean('status')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
