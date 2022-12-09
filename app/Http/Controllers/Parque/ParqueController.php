@@ -50,7 +50,15 @@ class ParqueController extends Controller
                 "data"          => $parque
             ], 201);
         }
+    }
 
-
+    public function getAllParques(){
+        return response()->json([
+            "status"=>200,
+            "msg"=>"Informacion localizada",
+            "error"=>null,
+            // "data"=>Persona::all()
+            "data"=>Parque::where('status', true)->get()
+        ],200);
     }
 }
