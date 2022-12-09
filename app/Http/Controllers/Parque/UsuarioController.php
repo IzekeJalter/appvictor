@@ -24,7 +24,7 @@ class UsuarioController extends Controller
                 'email'         => "required|string|unique:users|email",
                 'contraseña'    => "required|string|min:4",
                 'telefono'      => "required|integer",
-                'apodo'         => "required|string|max:20"
+                'username'      => "required|string|max:20"
             ]
         );
 
@@ -47,7 +47,7 @@ class UsuarioController extends Controller
         $user->email            = $request->email;
         $user->contraseña       = bcrypt($request->contraseña);
         $user->telefono         = $request->telefono;
-        $user->apodo            = $request->apodo;
+        $user->username          = $request->username;
         $user->numero_tarjeta   = $tarjeta->id;
         $user->save();
 
@@ -63,9 +63,6 @@ class UsuarioController extends Controller
                 "msg"   =>  "Existe un error al registrar el usuario, por favor verifique que sea la informacion adecuada"
             ]);
         }
-
-
-
 
     }
     public function registrar(Request $request)
@@ -93,7 +90,7 @@ class UsuarioController extends Controller
            }
            $tarjeta = new Tarjeta();
            $tarjeta->save();
-           
+
            srand (time());
            $numero_aleatorio= rand(5000,6000);
            $user=User::create([
