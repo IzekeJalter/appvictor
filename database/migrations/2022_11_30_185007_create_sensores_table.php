@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreign('parque_id')->references('id')->on('parques');
             $table->unsignedBigInteger('area_parque');
             $table->foreign('area_parque')->references('id')->on('parque_areas');
-            $table->boolean('status')->default(false);
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

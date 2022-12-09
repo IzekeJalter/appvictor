@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('parque_id')->references('id')->on('parques');
             $table->string('nombre_area', 30);
             $table->string('descripcion', 250);
-            $table->boolean('status')->default(false);
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }
