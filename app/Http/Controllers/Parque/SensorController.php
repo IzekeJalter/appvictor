@@ -7,7 +7,9 @@ use App\Models\ModelosParque\Parque;
 use App\Models\ModelosParque\Sensor;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
+
 
 class SensorController extends Controller
 {
@@ -49,26 +51,27 @@ class SensorController extends Controller
     }
 
     public function getAllSensores(Request $request){
-        $validacion = Validator::make(
-            $request->all(),[
-                'id'                => "required"
-            ]
-        );
-        if($validacion->fails()){
-            return response()->json([
-                "status"    => 400,
-                "msg"       => "No se cumplieron las validaciones",
-                "error"     => $validacion->errors(),
-                "data"      => null
-            ], 400);
-        }
+        //$idUser = $request->url;
+        //$user = User::find($idUser);
+        //$username = $user->username;
+        $username = "Victor_Almanza";
+
+        
+        //$response = Http::get(env('IPFINAL')."/api/v2/{$username}/feeds");
+        //$response = Http::get(config('global.important.ipfinal')."/api/v2/{$username}/feeds");
+        //$response = Http::withBasicAuth($username, 'aio_wGIX37j5mbpHitADGVIByw5BqYQE')->asForm()->get("http://io.adafruit.com/api/v2/{$username}/feeds");
+        
+
+        $response = Http::get("http://io.adafruit.com/api/v2/{$username}/feeds", [
+            'X-AIO-Key' => 'aio_wGIX37j5mbpHitADGVIByw5BqYQE'
+        ]);
 
         $parque = Parque::where('dueño_id', $request->id);
         return response()->json([
             "status"    => 200,
             "msg"       =>"Informacion localizada",
             "error"     => null,
-            "data"      => Sensor::where('parque_id', $parque)->get()
+            "data"      => $response
         ],200);
         //Sensor::where('status', true)->get()
     }

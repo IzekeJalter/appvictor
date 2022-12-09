@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Parque\SensorController;
 use App\Http\Controllers\Parque\UsuarioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,3 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post("/registroDueño", [UsuarioController::class, "crearDueño"]);
+Route::get("/pero", [SensorController::class, "getAllSensores"]);
