@@ -40,6 +40,9 @@ class UsuarioController extends Controller
         $tarjeta = new Tarjeta();
         $tarjeta->save();
 
+        srand (time());
+        $numero_aleatorio= rand(5000,6000);
+
         $user = new User();
         $user->nombre           = $request->nombre;
         $user->apellidos        = $request->apellidos;
@@ -47,9 +50,14 @@ class UsuarioController extends Controller
         $user->email            = $request->email;
         $user->contraseña       = bcrypt($request->contraseña);
         $user->telefono         = $request->telefono;
+        $user->codigo = $request-> $numero_aleatorio;
         $user->username          = $request->username;
         $user->numero_tarjeta   = $tarjeta->id;
         $user->save();
+
+        $valor=$user->id;
+        $url= URL::temporarySignedRoute(
+         'validarnumero', now()->addMinutes(30), ['url' => $valor]);
 
         if($user->save()){
             return response()->json([
