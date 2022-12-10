@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Parque;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\processSMS;
 use App\Models\ModelosParque\Tarjeta;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -50,14 +51,14 @@ class UsuarioController extends Controller
         $user->email            = $request->email;
         $user->contraseña       = bcrypt($request->contraseña);
         $user->telefono         = $request->telefono;
-        $user->codigo = $request-> $numero_aleatorio;
-        $user->username          = $request->username;
+        $user->username         = $request->username;
+        $user->codigo           = $numero_aleatorio;
         $user->numero_tarjeta   = $tarjeta->id;
         $user->save();
 
-        $valor=$user->id;
-        $url= URL::temporarySignedRoute(
-         'validarnumero', now()->addMinutes(30), ['url' => $valor]);
+//        $valor=$user->id;
+  //      $url= URL::temporarySignedRoute(
+    //     'validarnumero', now()->addMinutes(30), ['url' => $valor]);
 
         if($user->save()){
             return response()->json([
@@ -73,60 +74,31 @@ class UsuarioController extends Controller
         }
 
     }
-    public function registrar(Request $request)
+    Public function numerodeverificacionmovil(Request $request)
     {
-        $validacion = Validator::make(
-            $request->all(),
-            [
-                'nombre'=>'required|string|max:20',
-                'apellidos'=>'required|string|max:30',
-                'edad'=>'required|int',
-                'email'=>'required|string|email|max:255|unique:users',
-                'telefono'=>'required|numeric|digits:10|unique:users',
-                'contraseña'=>'required|string|min:8', 
-                'apodo'=>'string|min:4'
-            ]
+        if (! $request->hasValidSignature()) {
+            abort(401,"EL CODIGO ES INCORRECTO");
+        }
+        srand (time());
+        
+     $numero_aleatorio2 = rand(5000,6000);
+     $numeroiddelaurl= $request->url;
+
+
+          $url= URL::temporarySignedRoute(
+            'telefonoregistr', now()->addMinutes(30), ['url' => $numero_aleatorio2]
         );
+        $user = User::where('id', $numeroiddelaurl )->first();
 
-           if($validacion->fails()){
-            return response()->json([
-                'status'=>false,
-                'msg'=>'Error en las validaciones',
-                'error'=> $validacion->errors()
-            ], 401);
-            
-           }
-           $tarjeta = new Tarjeta();
-           $tarjeta->save();
+                processSMS::dispatch($user, $url)->onQueue('processSMS')->onConnection('database')->delay(now()->addSeconds(10));
 
-           srand (time());
-           $numero_aleatorio= rand(5000,6000);
-           $user=User::create([
-            'nombre'=>$request->nombre,
-            'apellidos'=>$request->apellidos,
-            'edad'=> $request->edad,
-            'telefono'=>$request->telefono,
-            'email'=>$request->email,
-            'codigo'=>$numero_aleatorio,
-            'contraseña'=>Hash::make($request->password),
-           ]);
-           
-           $valor=$user->id;
-           $url= URL::temporarySignedRoute(
-            'validarnumero', now()->addMinutes(30), ['url' => $valor]
-        );
+            //   processVerify::dispatch($user, $url)->onQueue('processVerify')->onConnection('database')->delay(now()->addSeconds(15));
 
-     // processEmail::dispatch($user, $url)->onQueue('processEmail')->onConnection('database')->delay(now()->addSeconds(20));
-
-
-       return response()->json([
-        "status"=>"Desactivado",
-        "mensaje"=>"Se inserto de manera correcta",
-        "error"=>[],
-        "datos"=>$user->email,
-        "Activacion"=>"Para activar su cuenta necesita confirmar en su correo electronico",
-     
-    ],201);
+                    return response()->json([
+                        "msg"=>"Tu numero de verificacion a sido enviada a tu telefono, 
+                        en breve recibiras un correo con instrucciones.",
+               
+                    ],201);
     }
-
 }
+
