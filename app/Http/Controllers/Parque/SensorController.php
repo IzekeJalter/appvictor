@@ -58,10 +58,10 @@ class SensorController extends Controller
             'X-AIO-Key' => config('global.important.keyIO')
         ]);
 
-        $data = json_decode($response);
+        // $data = json_decode($response);
         $parque = Parque::where('dueño_id', $request->id);
-        $a = array('name', 'key');
-        $b = array(1, 2, 3, 4, 5);
+        // $a = array('name', 'key');
+        // $b = array(1, 2, 3, 4, 5);
 
         
         
@@ -76,7 +76,7 @@ class SensorController extends Controller
             // foreach($data as $lista){
             //     return $data;
             // }
-            //$longitud = count($data);
+            $longitud = sizeof($response->object()->feeds);
             // dd($longitud);
             // foreach ($data as $data['username']) {
 
@@ -88,6 +88,12 @@ class SensorController extends Controller
                 $names[] = $feed->name;
                 $keys[] = $feed->key;
             }
+
+            // for ($i = 0; $i < $longitud; $i++){
+                
+            // }
+
+            // return $json;
 
             return response()->json([
                 'name' => $names,
@@ -166,7 +172,7 @@ class SensorController extends Controller
     public function getSpecificSensor(Request $request){
         $validacion = Validator::make(
             $request->all(),[
-                'id' => "required|interger"
+                'key' => "required|interger"
             ]
         );
         if($validacion->fails()){
@@ -182,7 +188,7 @@ class SensorController extends Controller
             "status"    => 200,
             "msg"       =>"Informacion localizada",
             "error"     => null,
-            "data"      => Sensor::where('id', $request->id)->get()
+            "data"      => Sensor::where('feed_key', $request->key)->get()
         ],200);
     }
 }
