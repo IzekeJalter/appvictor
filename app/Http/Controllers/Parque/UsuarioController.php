@@ -78,30 +78,31 @@ class UsuarioController extends Controller
         $validacion = Validator::make(
             $request->all(),
             [
-                'nombre'=>'required|string|max:20',
-                'apellidos'=>'required|string|max:30',
-                'edad'=>'required|int',
-                'email'=>'required|string|email|max:255|unique:users',
-                'telefono'=>'required|numeric|digits:10|unique:users',
+                'nombre'    =>'required|string|max:20',
+                'apellidos' =>'required|string|max:30',
+                'edad'      =>'required|int',
+                'email'     =>'required|string|email|max:255|unique:users',
+                'telefono'  =>'required|numeric|digits:10|unique:users',
                 'contraseña'=>'required|string|min:8', 
-                'apodo'=>'string|min:4'
+                'apodo'     =>'string|min:4'
             ]
         );
 
-           if($validacion->fails()){
+        if($validacion->fails()){
             return response()->json([
                 'status'=>false,
                 'msg'=>'Error en las validaciones',
                 'error'=> $validacion->errors()
             ], 401);
-            
-           }
-           $tarjeta = new Tarjeta();
-           $tarjeta->save();
+        
+        }
+        
+        $tarjeta = new Tarjeta();
+        $tarjeta->save();
 
-           srand (time());
-           $numero_aleatorio= rand(5000,6000);
-           $user=User::create([
+        srand (time());
+        $numero_aleatorio= rand(5000,6000);
+        $user=User::create([
             'nombre'=>$request->nombre,
             'apellidos'=>$request->apellidos,
             'edad'=> $request->edad,
@@ -109,10 +110,10 @@ class UsuarioController extends Controller
             'email'=>$request->email,
             'codigo'=>$numero_aleatorio,
             'contraseña'=>Hash::make($request->password),
-           ]);
+        ]);
            
-           $valor=$user->id;
-           $url= URL::temporarySignedRoute(
+        $valor=$user->id;
+        $url = URL::temporarySignedRoute(
             'validarnumero', now()->addMinutes(30), ['url' => $valor]
         );
 
@@ -120,13 +121,14 @@ class UsuarioController extends Controller
 
 
        return response()->json([
-        "status"=>"Desactivado",
-        "mensaje"=>"Se inserto de manera correcta",
-        "error"=>[],
-        "datos"=>$user->email,
-        "Activacion"=>"Para activar su cuenta necesita confirmar en su correo electronico",
-     
-    ],201);
-    }
+            "status"=>"Desactivado",
+            "mensaje"=>"Se inserto de manera correcta",
+            "error"=>[],
+            "datos"=>$user->email,
+            "Activacion"=>"Para activar su cuenta necesita confirmar en su correo electronico"
+        ],201);
+
+        
+        }
 
 }
