@@ -22,7 +22,9 @@ return [
         'dev' => env('DEV_EMAIL'),
     ],
     'important' => [
-        'ipfinal' => env('IPFINAL')
+        'ipfinal'   => 'http://io.adafruit.com',
+        'userIO'    => 'Victor_Almanza',
+        'keyIO'     => 'aio_wvOL11KTV5aofzmaY2A1vSM97GuA'    
     ]
 ];
 ?>

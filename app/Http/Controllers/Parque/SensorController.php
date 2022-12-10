@@ -51,26 +51,15 @@ class SensorController extends Controller
     }
 
     public function getAllSensores(Request $request){
-        
-        $username = "Victor_Almanza";        
-        //$response = Http::get(env('IPFINAL')."/api/v2/{$username}/feeds");
-        //$response = Http::get(config('global.important.ipfinal')."/api/v2/{$username}/feeds");
-        //$response = Http::withBasicAuth($username, 'aio_wGIX37j5mbpHitADGVIByw5BqYQE')->asForm()->get("http://io.adafruit.com/api/v2/{$username}/feeds");
-        
 
-        $response = Http::get("http://io.adafruit.com/api/v2/{$username}/feeds", [
-            'X-AIO-Key' => 'aio_mUIB50VyvFOyZ9dNc5rcUN50xHfr'
+
+
+        $response = Http::get("http://io.adafruit.com/api/v2/".config('global.important.userIO')."/feeds", [
+            'X-AIO-Key' => config('global.important.keyIO')
         ]);
 
         $parque = Parque::where('dueño_id', $request->id);
         return $response;
-        // return response()->json([
-        //     "status"    => 200,
-        //     "msg"       =>"Informacion localizada",
-        //     "error"     => null,
-        //     "data"      => response()->json($response->body())
-        // ],200);
-        //Sensor::where('status', true)->get()
     }
 
     public function getSpecificSensor(Request $request){
