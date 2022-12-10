@@ -21,7 +21,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('contraseña');
             $table->string('telefono');
-            $table->string('apodo');
+            $table->string('codigo');
+            $table->string('username');
             $table->unsignedBigInteger('numero_tarjeta');
             $table->foreign('numero_tarjeta')->references('id')->on('tarjetas');
             $table->boolean('status')->default(0);
