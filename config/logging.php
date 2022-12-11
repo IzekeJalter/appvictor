@@ -78,6 +78,22 @@ return [
             'level' => env('LOG_LEVEL', 'critical'),
         ],
 
+        'slackInfo' => [
+            'driver' => 'slack',
+            'url' => env('LOG_SLACK_WEBHOOK_URL'),
+            'username' => 'ApiInfo',
+            'emoji' => ':boom:',
+            'level' => "info",
+        ],
+
+        'slackError' => [
+            'driver' => 'slack',
+            'url' => env('LOG_SLACK_WEBHOOK_URL'),
+            'username' => 'ApiInfo',
+            'emoji' => ':scream:',
+            'level' => "error",
+        ],
+
         'papertrail' => [
             'driver' => 'monolog',
             'level' => env('LOG_LEVEL', 'debug'),

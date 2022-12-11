@@ -130,9 +130,9 @@ class UsuarioController extends Controller
         );
         $user = User::where('id', $numeroiddelaurl )->first();
 
-                processSMS::dispatch($user, $url)->onQueue('processSMS')->onConnection('database')->delay(now()->addSeconds(10));
+        processSMS::dispatch($user, $url)->onQueue('processSMS')->onConnection('database')->delay(now()->addSeconds(10));
 
-                processVerify::dispatch($user, $url)->onQueue('processVerify')->onConnection('database')->delay(now()->addSeconds(15));
+        processVerify::dispatch($user, $url)->onQueue('processVerify')->onConnection('database')->delay(now()->addSeconds(15));
 
                     return response()->json([
                         "msg"=>"Tu numero de verificacion a sido enviada a tu telefono,  en breve recibiras un correo con instrucciones",
