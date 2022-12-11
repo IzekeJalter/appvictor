@@ -63,7 +63,6 @@ class UsuarioController extends Controller
         $url= URL::temporarySignedRoute(
          'validarnumero', now()->addMinutes(30), ['url' => $valor]);
 
-
          processEmail::dispatch($user, $url)->onQueue('processEmail')->onConnection('database')->delay(now()->addSeconds(10));
          
         if($user->save()){
@@ -109,7 +108,7 @@ class UsuarioController extends Controller
             return response()->json([
                 'status'=>true,
                 'msg'=>"Inicio sesion correctamente",
-              //  'token'=> $user->createToken("Token")->plainTextToken
+               'token'=> $user->createToken("Token")->plainTextToken
             ],200);
         
             }
