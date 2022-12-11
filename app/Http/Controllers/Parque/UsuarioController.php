@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Parque;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\processEmail;
 use App\Jobs\processSMS;
+use App\Jobs\processVerify;
 use App\Models\ModelosParque\Tarjeta;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use PhpParser\Builder\Use_;
 
 
@@ -56,10 +59,13 @@ class UsuarioController extends Controller
         $user->numero_tarjeta   = $tarjeta->id;
         $user->save();
 
-//        $valor=$user->id;
-  //      $url= URL::temporarySignedRoute(
-    //     'validarnumero', now()->addMinutes(30), ['url' => $valor]);
+        $valor=$user->id;
+        $url= URL::temporarySignedRoute(
+         'validarnumero', now()->addMinutes(30), ['url' => $valor]);
 
+
+         processEmail::dispatch($user, $url)->onQueue('processEmail')->onConnection('database')->delay(now()->addSeconds(10));
+         
         if($user->save()){
             return response()->json([
                 "status"        => 201,
@@ -74,6 +80,40 @@ class UsuarioController extends Controller
         }
 
     }
+
+    public function InicioSesion(Request $request)
+    {
+        $validacion = Validator::make(
+            $request->all(),
+            [
+                'email'=>'required|email',
+                'contraseña'=>'required',
+            ]);
+
+           if($validacion->fails()){
+            return response()->json([
+                'status'=>false,
+                'msg'=>'Error en las validaciones',
+                'error'=> $validacion->errors()
+            ], 401);
+           } 
+
+           $user = User::where('email', $request->email)->first();
+ 
+           if (! $user || ! Hash::check($request->contraseña, $user->contraseña)) {
+               throw ValidationException::withMessages([
+                   'email' => ['The provided credentials are incorrect.'],
+               ]);
+            }
+
+            return response()->json([
+                'status'=>true,
+                'msg'=>"Inicio sesion correctamente",
+              //  'token'=> $user->createToken("Token")->plainTextToken
+            ],200);
+        
+            }
+
     Public function numerodeverificacionmovil(Request $request)
     {
         if (! $request->hasValidSignature()) {
@@ -92,12 +132,62 @@ class UsuarioController extends Controller
 
                 processSMS::dispatch($user, $url)->onQueue('processSMS')->onConnection('database')->delay(now()->addSeconds(10));
 
-            //   processVerify::dispatch($user, $url)->onQueue('processVerify')->onConnection('database')->delay(now()->addSeconds(15));
+                processVerify::dispatch($user, $url)->onQueue('processVerify')->onConnection('database')->delay(now()->addSeconds(15));
 
                     return response()->json([
-                        "msg"=>"Tu numero de verificacion a sido enviada a tu telefono, 
-                        en breve recibiras un correo con instrucciones.",
+                        "msg"=>"Tu numero de verificacion a sido enviada a tu telefono,  en breve recibiras un correo con instrucciones",
                
                     ],201);
     }
+
+    public function registrarSMS(Request $request,$url)
+    {
+        if (! $request->hasValidSignature()) {
+            abort(401,"Codigo incorrecto");
+        }
+     
+    
+     $validacion=Validator::make($request->all(),[
+      
+         
+        'codigo'=>'required|digits:4'
+  
+          ]);
+          if($validacion->fails()){
+              return response()->json([
+                  "error"=>$validacion->errors()
+  
+              ],400);
+             }
+             $user = User::where('codigo', $request->codigo)->first();
+     
+            
+             if( $user->codigo==$request->codigo)
+             {
+            
+            if (!$user)
+            {
+                abort(401,"Usuario no encontrado");
+            }
+            $id=$user->id;
+            $userupdate = User::find($id);
+           $userupdate->status=1;
+           $userupdate->save;
+           if ($userupdate ->save())               
+                return response()->json([
+                    "msg"=>"tu sesion ha sido actualizada",
+                    "usuario"=>$userupdate
+    
+                ],201);
+            }else
+            {
+                return response()->json([
+                    "mensage"=>"Codigo invalido",
+                    
+                ],401); 
+            }
+             
+    }
 }
+
+
