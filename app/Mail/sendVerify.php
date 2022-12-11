@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendMail extends Mailable
+class sendVerify extends Mailable
 {
     use Queueable, SerializesModels;
     protected $user;
@@ -24,8 +24,7 @@ class SendMail extends Mailable
     public function __construct(User $user, $url)
     {
         $this->user= $user;
-        $this->url= $url;
-
+    $this->url= $url;
     }
 
     /**
@@ -36,7 +35,7 @@ class SendMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Welcome!',
+            subject: 'Verificar',
         );
     }
 
@@ -48,14 +47,14 @@ class SendMail extends Mailable
     public function content()
     {
         return new Content(
-            view: 'email.welcome',
-            with: [
+            view: 'email.verificar',
+            with:[
                 'name'=>$this->user->nombre,
-                'email'=>$this->user->email,
-                'url'=>$this->url,
+                'url'=>$this->url
             ]
         );
     }
+
     /**
      * Get the attachments for the message.
      *
