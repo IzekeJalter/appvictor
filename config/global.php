@@ -24,7 +24,7 @@ return [
     'important' => [
         'ipfinal'   => 'http://io.adafruit.com',
         'userIO'    => 'Victor_Almanza',
-        'keyIO'     => 'aio_gOoW15GYVt9wbvc3PGYp1oXM3fKS',
+        'keyIO'     => 'aio_TNJV74BcrSBOGmMm1uo6nZDwmYwT',
         'group_key' => 'finalproyect'
     ]
 ];

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Parque\ParqueController;
 use App\Http\Controllers\Parque\SensorController;
 use App\Http\Controllers\Parque\UsuarioController;
 use Illuminate\Http\Request;
@@ -27,3 +28,4 @@ Route::post("/login",[UsuarioController::class,"InicioSesion"]);
 
 Route::post("/telefonoregistr/{url}",[UsuarioController::class,"registrarSMS"])->name('telefonoregistr')->middleware('signed');
 Route::get("/validarnumero/{url}",[UsuarioController::class,"numerodeverificacionmovil"])->name('validarnumero')->middleware('signed');
+Route::post("/addParque", [ParqueController::class, "addParque"]);

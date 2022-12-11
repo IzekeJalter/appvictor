@@ -7,6 +7,7 @@ use App\Models\ModelosParque\Parque;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class ParqueController extends Controller
 {
@@ -52,13 +53,19 @@ class ParqueController extends Controller
         }
     }
 
-    public function getAllParques(){
+    public function getAllParques(Request $request){
+        $id = $request->url();
+        $parque = DB::table('parques')
+            ->join('users', 'parques.dueño_id', '=', 'users.id')
+            ->where('status', true)->where('dueño_id', $id)
+            ->get();
         return response()->json([
             "status"=>200,
             "msg"=>"Informacion localizada",
             "error"=>null,
             // "data"=>Persona::all()
-            "data"=>Parque::where('status', true)->get()
+            "data"=>$parque
         ],200);
+        // Parque::where('status', true)->get()
     }
 }
